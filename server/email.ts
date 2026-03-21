@@ -165,7 +165,7 @@ export async function sendDeliveryEmail(params: {
                 <a href="mailto:${senderEmail}" style="color:#4f9cf9;text-decoration:none;">${senderEmail}</a>
               </p>
               <p style="margin:8px 0 0;font-size:12px;color:#1f2937;">
-                © 2026 盈指量有限公司 · 7天无理由退款保障
+                © 2026 盈指量有限公司 · 知识付费不支持退款
               </p>
             </td>
           </tr>

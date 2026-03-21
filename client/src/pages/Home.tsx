@@ -113,9 +113,9 @@ const PRODUCTS = [
     title: "量化交易策略手册",
     subtitle: "Quant Trading Playbook 2026",
     image: ASSETS.productTrading,
-    priceCNY: 199,
-    priceUSDC: 28,
-    originalPriceCNY: 599,
+    priceCNY: 19999,
+    priceUSDC: 2800,
+    originalPriceCNY: 29999,
     rating: 4.7,
     sales: 892,
     description: "专为散户设计的量化交易入门到进阶完整手册。包含10+实战策略、风险管理框架、Python回测代码模板，以及2026年最新的加密货币量化交易专项内容。",
@@ -454,7 +454,7 @@ function PaymentModal({
 
           {/* Guarantee */}
           <div className="mt-4 flex items-center justify-center gap-4 text-xs text-[oklch(0.5_0.02_240)]">
-            <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-green-400" /> 7天退款</span>
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-red-400" /> 不支持退款</span>
             <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-blue-400" /> 安全支付</span>
             <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-yellow-400" /> 自动发货</span>
           </div>
@@ -880,7 +880,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { icon: Mail, title: "邮件自动发货", desc: "填写邮箱完成支付后，系统自动发送产品下载链接，全程无人值守，7×24小时运营。", color: "text-blue-400", bg: "bg-blue-400/10" },
-              { icon: Shield, title: "7天退款保障", desc: "对产品不满意？7天内无条件全额退款，零风险购买体验。", color: "text-green-400", bg: "bg-green-400/10" },
+              { icon: Shield, title: "知识付费不支持退款", desc: "本产品为知识付费内容，一经购买不支持退款。请诤慎下单。", color: "text-red-400", bg: "bg-red-400/10" },
               { icon: Globe, title: "全球双渠道收款", desc: "支持支付宝人民币付款（国内用户）和Polygon USDC加密支付（海外用户）。", color: "text-purple-400", bg: "bg-purple-400/10" },
               { icon: Timer, title: "限时24小时优惠", desc: "每款产品均设置限时优惠倒计时，错过当前价格需等待下次活动。", color: "text-orange-400", bg: "bg-orange-400/10" },
               { icon: Users, title: "7000+用户验证", desc: "超过7000名来自全球50+国家的用户已经购买并使用，98.6%好评率。", color: "text-yellow-400", bg: "bg-yellow-400/10" },
@@ -971,8 +971,8 @@ export default function Home() {
               { q: "购买后如何获取产品？", a: "选择支付方式 → 完成付款 → 在弹窗中填写您的邮箱地址 → 点击[确认购买]。系统将在30秒内自动发送产品下载链接至您的邮箱，全程无需人工干预。" },
               { q: "USDC支付需要使用哪个网络？", a: "请务必使用 Polygon（MATIC）网络发送USDC，收款地址为 0x3DbFf9E97b10a10d4A2079B4273473da7e6F4120。请勿使用以太坊主网或其他网络，否则资产将无法找回。" },
               { q: "邮件没有收到怎么办？", a: "请先检查垃圾邮件文件夹。若仍未收到，请联系 121126652qq@gmail.com，注明购买的产品和支付方式，我们会在1小时内手动发货。" },
-              { q: "产品是否支持退款？", a: "支持7天无理由退款。如果您对产品不满意，请在购买后7天内联系我们，我们将全额退款，无需任何理由。" },
-              { q: "是否有组合优惠？", a: "有的！购买全套4款产品组合包仅需¥399（或$55 USDC），相比单独购买节省超过70%。这是我们最受欢迎的选项。" },
+              { q: "产品是否支持退款？", a: "本产品为知识付费内容，一经购买成功不支持退款。请在购买前仔细阅读产品描述。" },
+              { q: "是否有组合优惠？", a: "有的！购买全套4款产品组合包仅需¥20999（或$2944 USDC），相比单独购买节省超过70%。这是我们最受欢迎的选项。" },
             ].map((faq, i) => (
               <motion.div
                 key={i}
@@ -1021,7 +1021,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="flex items-center justify-center gap-6 mt-8 text-sm text-[oklch(0.45_0.02_240)]">
-              <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-green-400" /> 7天退款保障</span>
+              <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-red-400" /> 不支持退款</span>
               <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-blue-400" /> 邮件自动发货</span>
               <span className="flex items-center gap-1.5"><Download className="w-4 h-4 text-yellow-400" /> 即时交付</span>
             </div>
@@ -1046,7 +1046,7 @@ export default function Home() {
                 © 2026 盈指量有限公司 · 全球数字产品销售平台
               </p>
               <p className="text-xs text-[oklch(0.35_0.02_240)] mt-1">
-                支持支付宝 · Polygon USDC · 邮件自动发货 · 7天退款保障
+                支持支付宝 · Polygon USDC · 邮件自动发货 · 不支持退款
               </p>
             </div>
             <div className="flex items-center gap-4 text-xs text-[oklch(0.4_0.02_240)]">
