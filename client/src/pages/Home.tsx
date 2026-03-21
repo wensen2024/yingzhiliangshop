@@ -831,15 +831,15 @@ export default function Home() {
                 </h3>
                 <p className="text-[oklch(0.6_0.02_240)] max-w-lg">
                   一次性获得全部4款产品，享受最大折扣。AI工具包 + Notion模板 + 内容系统 + 交易手册，
-                  总价值¥1,496，现仅需¥399。
+                  总价值¥30,496，现仅需¥20,999。
                 </p>
               </div>
               <div className="text-center md:text-right shrink-0">
                 <div className="flex items-baseline gap-2 justify-center md:justify-end mb-1">
-                  <span className="text-4xl font-['Syne'] font-extrabold text-white">¥399</span>
-                  <span className="text-lg text-[oklch(0.4_0.02_240)] line-through">¥1,496</span>
+                  <span className="text-4xl font-['Syne'] font-extrabold text-white">¥20,999</span>
+                  <span className="text-lg text-[oklch(0.4_0.02_240)] line-through">¥30,496</span>
                 </div>
-                <p className="text-xs text-[oklch(0.5_0.02_240)] mb-4">或 $55 USDC (Polygon)</p>
+                <p className="text-xs text-[oklch(0.5_0.02_240)] mb-4">或 $2,944 USDC (Polygon)</p>
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)] hover:opacity-90 text-white font-bold px-8"
