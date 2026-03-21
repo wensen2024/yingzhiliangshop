@@ -27,27 +27,27 @@ export const PRODUCT_DOWNLOAD_LINKS: Record<
 > = {
   "ai-toolkit": {
     name: "AI提示词工程师工具包 2026",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit_2620414b.pdf",
     description: "包含500+精选提示词模板，覆盖ChatGPT、Claude、Gemini、Midjourney全平台",
   },
   "notion-os": {
     name: "Notion商业运营系统",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product2_notion_os.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product2_notion_os_cad89f49.pdf",
     description: "完整的Notion商业操作系统，含CRM、项目管理、财务追踪等5大模块",
   },
   "content-ai": {
     name: "AI自媒体内容创作系统",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product3_content_ai.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product3_content_ai_9672ad9c.pdf",
     description: "2026年最完整的AI辅助自媒体运营系统，覆盖抖音、小红书、YouTube全平台",
   },
   trading: {
     name: "量化交易策略手册 2026",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product4_trading.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product4_trading_bc7aa265.pdf",
     description: "专为散户设计的量化交易入门到进阶完整手册，含10+实战策略和Python代码",
   },
   bundle: {
     name: "全套产品组合包（4合1）",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/bundle_all_products.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit_2620414b.pdf",
     description: "包含全部4款产品的完整内容，一次性获得所有资料",
   },
 };
