@@ -27,27 +27,27 @@ export const PRODUCT_DOWNLOAD_LINKS: Record<
 > = {
   "ai-toolkit": {
     name: "AI提示词工程师工具包 2026",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit_2620414b.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit_561d36b2.pdf",
     description: "包含500+精选提示词模板，覆盖ChatGPT、Claude、Gemini、Midjourney全平台",
   },
   "notion-os": {
     name: "Notion商业运营系统",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product2_notion_os_cad89f49.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product2_notion_os_a9eb9a5b.pdf",
     description: "完整的Notion商业操作系统，含CRM、项目管理、财务追踪等5大模块",
   },
   "content-ai": {
     name: "AI自媒体内容创作系统",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product3_content_ai_9672ad9c.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product3_content_ai_ec554c48.pdf",
     description: "2026年最完整的AI辅助自媒体运营系统，覆盖抖音、小红书、YouTube全平台",
   },
   trading: {
     name: "量化交易策略手册 2026",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product4_trading_bc7aa265.pdf",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product4_trading_4d16e480.pdf",
     description: "专为散户设计的量化交易入门到进阶完整手册，含10+实战策略和Python代码",
   },
   bundle: {
-    name: "全套产品组合包（4合1）",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit_2620414b.pdf",
+    name: "全套产品组合包（之合）",
+    url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/product1_ai_toolkit_561d36b2.pdf",
     description: "包含全部4款产品的完整内容，一次性获得所有资料",
   },
 };
@@ -86,10 +86,9 @@ export async function sendDeliveryEmail(params: {
 
           <!-- Header -->
           <tr>
-            <td style="background:linear-gradient(135deg,#0f1729,#1a0f2e);padding:40px 40px 30px;text-align:center;border-bottom:1px solid #1e2340;">
+              <div style="background:linear-gradient(135deg,#0f1729,#1a0f2e);padding:40px 40px 30px;text-align:center;border-bottom:1px solid #1e2340;">
               <div style="margin-bottom:16px;">
-                <span style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Digital<span style="color:#4f9cf9;">Flow</span> Studio</span>
-              </div>
+                <span style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;">盈指量<span style="color:#4f9cf9;">科技</span></span>            </div>
               <h1 style="margin:0;font-size:28px;font-weight:800;color:#fff;line-height:1.2;">
                 🎉 您的产品已发货！
               </h1>
@@ -166,7 +165,7 @@ export async function sendDeliveryEmail(params: {
                 <a href="mailto:${senderEmail}" style="color:#4f9cf9;text-decoration:none;">${senderEmail}</a>
               </p>
               <p style="margin:8px 0 0;font-size:12px;color:#1f2937;">
-                © 2026 DigitalFlow Studio · 7天无理由退款保障
+                © 2026 盈指量有限公司 · 7天无理由退款保障
               </p>
             </td>
           </tr>

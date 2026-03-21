@@ -1,5 +1,5 @@
 /**
- * DigitalFlow Studio — 2026全球热销数字产品商店
+ * 盈指量有限公司 — 2026全球热销数字产品商店
  * Design: Deep Space Tech — Dark cosmic aesthetic with neon accents
  * New features: 24h countdown timer per product card + purchase form with auto email delivery
  */
@@ -1043,7 +1043,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <p className="text-xs text-[oklch(0.4_0.02_240)]">
-                © 2026 DigitalFlow Studio · 全球数字产品销售平台
+                © 2026 盈指量有限公司 · 全球数字产品销售平台
               </p>
               <p className="text-xs text-[oklch(0.35_0.02_240)] mt-1">
                 支持支付宝 · Polygon USDC · 邮件自动发货 · 7天退款保障
