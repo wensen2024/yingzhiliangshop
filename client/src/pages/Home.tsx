@@ -848,9 +848,9 @@ export default function Home() {
                       ...PRODUCTS[0],
                       id: "bundle",
                       title: "全套产品组合包",
-                      priceCNY: 399,
-                      priceUSDC: 55,
-                      originalPriceCNY: 1496,
+                      priceCNY: 20999,
+                      priceUSDC: 2944,
+                      originalPriceCNY: 30496,
                     });
                     setPaymentOpen(true);
                   }}
