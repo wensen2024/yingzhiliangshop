@@ -585,6 +585,21 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // ─── SEO: Set page title and keywords ───────────────────────────────────────
+  useEffect(() => {
+    document.title = "数字产品商店 - AI工具、Notion模板、量化交易手册";
+    
+    // Set keywords meta tag
+    let keywordsMeta = document.querySelector('meta[name="keywords"]');
+    if (!keywordsMeta) {
+      keywordsMeta = document.createElement('meta');
+      keywordsMeta.setAttribute('name', 'keywords');
+      document.head.appendChild(keywordsMeta);
+    }
+    keywordsMeta.setAttribute('content', 'AI工具、数字产品、Notion模板、量化交易、内容创作、提示词、知识付费、数字产品店');
+  }, []);
+
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
