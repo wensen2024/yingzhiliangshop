@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createOrder, updateOrderStatus } from "./db";
 import { sendDeliveryEmail, PRODUCT_DOWNLOAD_LINKS } from "./email";
 import { notifyOwner } from "./_core/notification";
+import { verifyPaymentProof, uploadPaymentProof } from "./paymentProof";
 
 export const appRouter = router({
   system: systemRouter,
@@ -85,6 +86,68 @@ export const appRouter = router({
       }),
 
     /**
+     * Verify payment proof image and trigger delivery if valid
+     */
+    verifyProof: publicProcedure
+      .input(
+        z.object({
+          orderId: z.number(),
+          proofImageBase64: z.string(),
+          fileName: z.string(),
+          expectedAmount: z.string(),
+          paymentMethod: z.enum(["alipay", "usdc"]),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          // 1. Upload proof image to S3
+          const imageBuffer = Buffer.from(input.proofImageBase64, "base64");
+          const uploadResult = await uploadPaymentProof(
+            imageBuffer,
+            input.orderId,
+            input.fileName
+          );
+
+          // 2. Verify payment proof using LLM
+          const verificationResult = await verifyPaymentProof(
+            uploadResult.url,
+            input.orderId,
+            input.expectedAmount,
+            input.paymentMethod
+          );
+
+          // 3. If verified, send delivery email
+          if (verificationResult.verified) {
+            const { getOrderById } = await import("./db");
+            const order = await getOrderById(input.orderId);
+            if (order) {
+              await sendDeliveryEmail({
+                toEmail: order.email,
+                productId: order.productId,
+                paymentMethod: order.paymentMethod as "alipay" | "usdc",
+                amount: order.amount.toString(),
+                currency: order.currency,
+              });
+              await updateOrderStatus(input.orderId, "delivered", new Date());
+            }
+          }
+
+          return {
+            success: verificationResult.verified,
+            reason: verificationResult.reason,
+            detectedAmount: verificationResult.detectedAmount,
+            detectedTxId: verificationResult.detectedTxId,
+          };
+        } catch (error) {
+          console.error("[Payment Proof Verification Error]", error);
+          return {
+            success: false,
+            reason: `验证失败：${error instanceof Error ? error.message : "未知错误"}`,
+          };
+        }
+      }),
+
+        /**
      * Get available products list (for frontend reference)
      */
     getProducts: publicProcedure.query(() => {

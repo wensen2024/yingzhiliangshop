@@ -15,6 +15,13 @@
       "when": 1773847766728,
       "tag": "0001_jittery_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774368636318,
+      "tag": "0002_zippy_the_call",
+      "breakpoints": true
     }
   ]
 }

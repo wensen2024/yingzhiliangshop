@@ -37,6 +37,10 @@ export const orders = mysqlTable("orders", {
   currency: varchar("currency", { length: 8 }).notNull(),
   /** Optional transaction hash or payment proof */
   txHash: text("txHash"),
+  /** Payment proof image URL (S3) */
+  paymentProofUrl: text("paymentProofUrl"),
+  /** Payment proof verification status */
+  proofVerified: mysqlEnum("proofVerified", ["pending", "verified", "rejected"]).default("pending").notNull(),
   /** Delivery status */
   status: mysqlEnum("status", ["pending", "delivered", "failed"]).default("pending").notNull(),
   /** When the delivery email was sent */
