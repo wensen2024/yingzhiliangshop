@@ -20,7 +20,7 @@ interface ImprovedPaymentFlowProps {
   onClose: () => void;
 }
 
-type FlowStep = "payment" | "proof" | "email" | "success";
+type FlowStep = "payment" | "proof" | "saving" | "email" | "success";
 
 export function ImprovedPaymentFlow({
   product,
@@ -50,6 +50,16 @@ export function ImprovedPaymentFlow({
     }
   }, [paymentConfirmed, currentStep, language]);
 
+  // 凭证保存后自动跳转到邮箱页面
+  useEffect(() => {
+    if (proofUploaded && currentStep === "saving") {
+      setTimeout(() => {
+        setCurrentStep("email");
+        toast.success(language === 'zh' ? '凭证已保存！现在填写邮箱' : 'Proof saved! Now enter your email');
+      }, 2000);
+    }
+  }, [proofUploaded, currentStep, language]);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(USDC_ADDRESS);
     setCopied(true);
@@ -64,10 +74,10 @@ export function ImprovedPaymentFlow({
   const handleProofVerified = () => {
     setProofUploaded(true);
     setShowProofUpload(false);
-    toast.success(language === 'zh' ? '凭证验证成功！现在填写邮箱' : 'Proof verified! Now enter your email');
-    // 凭证验证后自动跳转到邮箱输入页面
+    toast.success(language === 'zh' ? '凭证验证成功！' : 'Proof verified!');
+    // 凭证验证后自动跳转到系统保存页面
     setTimeout(() => {
-      setCurrentStep("email");
+      setCurrentStep("saving");
     }, 500);
   };
 
@@ -106,7 +116,7 @@ export function ImprovedPaymentFlow({
                 {t.payment.title} · {product.title}
               </DialogTitle>
               <p className="text-sm text-[oklch(0.6_0.02_240)] mt-2">
-                {t.payment.step1} → {t.payment.step2} → {t.payment.step3} → {t.payment.step4}
+                1️⃣ {t.payment.step1} → 2️⃣ {t.payment.step2} → 3️⃣ 系统保存 → 4️⃣ {t.payment.step4}
               </p>
             </DialogHeader>
           </div>
@@ -258,7 +268,27 @@ export function ImprovedPaymentFlow({
               </div>
             )}
 
-            {/* Step 3: Email (AUTO JUMP AFTER PROOF VERIFIED) */}
+            {/* Step 3: System Saving */}
+            {currentStep === "saving" && (
+              <div className="space-y-6 text-center py-8">
+                <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto animate-pulse">
+                  <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+                </div>
+                <h3 className="text-lg font-bold text-white">
+                  {language === 'zh' ? '系统正在保存凭证...' : 'System saving proof...'}
+                </h3>
+                <p className="text-sm text-[oklch(0.6_0.02_240)]">
+                  {language === 'zh' ? '请稍候，系统正在验证和保存您的付款凭证' : 'Please wait while system verifies and saves your payment proof'}
+                </p>
+                <div className="mt-6 space-y-2">
+                  <div className="h-1 bg-[oklch(0.2_0.03_260)] rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 animate-pulse" style={{width: '100%'}}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Email (AUTO JUMP AFTER PROOF SAVED) */}
             {currentStep === "email" && (
               <div className="space-y-6">
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex gap-3 animate-pulse">
@@ -293,7 +323,7 @@ export function ImprovedPaymentFlow({
                   onClick={handleEmailSubmit}
                   className="w-full bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)]"
                 >
-                  {t.payment.step4} 🚀
+                  {language === 'zh' ? '4️⃣ 发送到邮箱' : '4️⃣ Send to Email'} 🚀
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
