@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Copy, Check, Upload, Mail, Loader2, ChevronRight } from "lucide-react";
-import { trpc } from "@/lib/trpc";
+import { Copy, Check, Upload, Mail, ChevronRight, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import { PaymentProofUpload } from "./PaymentProofUpload";
@@ -34,7 +33,6 @@ export function ImprovedPaymentFlow({
   const [currentStep, setCurrentStep] = useState<FlowStep>("payment");
   const [paymentMethod, setPaymentMethod] = useState<"alipay" | "usdc">("alipay");
   const [copied, setCopied] = useState(false);
-  const [orderId, setOrderId] = useState<number | null>(null);
   const [email, setEmail] = useState("");
   const [proofUploaded, setProofUploaded] = useState(false);
   const [showProofUpload, setShowProofUpload] = useState(false);
@@ -51,12 +49,16 @@ export function ImprovedPaymentFlow({
   const handleProofVerified = () => {
     setProofUploaded(true);
     setShowProofUpload(false);
-    setCurrentStep("email");
+    toast.success(language === 'zh' ? '凭证验证成功！现在填写邮箱' : 'Proof verified! Now enter your email');
   };
 
   const handleEmailSubmit = () => {
     if (!email) {
-      toast.error(t.payment.emailPlaceholder);
+      toast.error(language === 'zh' ? '请输入邮箱地址' : 'Please enter email address');
+      return;
+    }
+    if (!proofUploaded) {
+      toast.error(language === 'zh' ? '必须先上传凭证' : 'Must upload proof first');
       return;
     }
     setCurrentStep("success");
@@ -67,7 +69,6 @@ export function ImprovedPaymentFlow({
     setPaymentMethod("alipay");
     setEmail("");
     setProofUploaded(false);
-    setOrderId(null);
     onClose();
   };
 
@@ -91,9 +92,18 @@ export function ImprovedPaymentFlow({
           </div>
 
           <div className="p-6 max-h-[80vh] overflow-y-auto">
-            {/* Step 1: Payment Method & QR Code */}
+            {/* Step 1: Payment */}
             {currentStep === "payment" && (
               <div className="space-y-6">
+                <div className="bg-[oklch(0.15_0.04_240)] border border-[oklch(0.25_0.04_260)] rounded-lg p-4 flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-[oklch(0.7_0.02_240)]">
+                    {language === 'zh' 
+                      ? '⚠️ 重要：完成支付后，必须上传付款凭证并通过验证，才能填写邮箱进行发货。'
+                      : '⚠️ Important: After payment, you MUST upload proof and verify it before entering email.'}
+                  </p>
+                </div>
+
                 <div>
                   <Label className="text-[oklch(0.7_0.02_240)] text-sm mb-3 block">
                     {t.payment.selectMethod}
@@ -132,7 +142,7 @@ export function ImprovedPaymentFlow({
                   {paymentMethod === "alipay" ? (
                     <div className="space-y-2">
                       <p className="text-xs text-[oklch(0.6_0.02_240)]">
-                        扫描二维码或点击下方链接支付
+                        {language === 'zh' ? '扫描二维码或点击下方链接支付' : 'Scan QR code or click link below to pay'}
                       </p>
                       <img
                         src="https://d2xsxph8kpxj0f.cloudfront.net/310519663451731631/LimBCtLaywKd7az4jrTc8V/alipay-qr_8719856e.jpg"
@@ -176,12 +186,21 @@ export function ImprovedPaymentFlow({
               </div>
             )}
 
-            {/* Step 2: Upload Proof */}
+            {/* Step 2: Upload Proof (MANDATORY) */}
             {currentStep === "proof" && (
               <div className="space-y-6">
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-300">
+                    {language === 'zh'
+                      ? '🔴 必须上传支付凭证并通过验证，才能继续！'
+                      : '🔴 REQUIRED: Upload and verify payment proof to continue!'}
+                  </p>
+                </div>
+
                 <div className="bg-[oklch(0.12_0.04_240)] border border-[oklch(0.2_0.03_260)] rounded-lg p-4">
-                  <p className="text-sm text-[oklch(0.7_0.02_240)] mb-3">
-                    {t.proof.subtitle}
+                  <p className="text-sm text-[oklch(0.7_0.02_240)] mb-3 font-medium">
+                    📸 {t.proof.subtitle}
                   </p>
                   <Button
                     onClick={() => setShowProofUpload(true)}
@@ -193,29 +212,48 @@ export function ImprovedPaymentFlow({
                   </Button>
                 </div>
 
-                {proofUploaded && (
+                {proofUploaded ? (
                   <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 flex items-center gap-2">
                     <Check className="w-5 h-5 text-green-400" />
-                    <span className="text-sm text-green-300">凭证已验证通过</span>
+                    <span className="text-sm text-green-300">
+                      {language === 'zh' ? '✅ 凭证已验证通过' : '✅ Proof verified'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 flex items-center gap-2">
+                    <span className="text-sm text-yellow-300">
+                      {language === 'zh' ? '⏳ 等待凭证上传和验证' : '⏳ Waiting for proof upload and verification'}
+                    </span>
                   </div>
                 )}
 
                 <Button
                   onClick={() => setCurrentStep("email")}
                   disabled={!proofUploaded}
-                  className="w-full bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)]"
+                  className="w-full bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {t.payment.step3}
+                  {proofUploaded 
+                    ? `${t.payment.step3} ✓` 
+                    : `${language === 'zh' ? '⏳ 请先验证凭证' : '⏳ Verify proof first'}`}
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             )}
 
-            {/* Step 3: Email */}
+            {/* Step 3: Email (ONLY AFTER PROOF) */}
             {currentStep === "email" && (
               <div className="space-y-6">
+                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex gap-3">
+                  <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-300">
+                    {language === 'zh'
+                      ? '✅ 凭证已验证通过！现在填写邮箱完成发货'
+                      : '✅ Proof verified! Now enter email to complete delivery'}
+                  </p>
+                </div>
+
                 <div className="space-y-2">
-                  <Label className="text-[oklch(0.7_0.02_240)] text-sm">
+                  <Label className="text-[oklch(0.7_0.02_240)] text-sm font-medium">
                     <Mail className="w-3.5 h-3.5 inline mr-1.5" />
                     {t.payment.email}
                   </Label>
@@ -227,7 +265,9 @@ export function ImprovedPaymentFlow({
                     className="bg-[oklch(0.12_0.02_260)] border-[oklch(0.25_0.04_260)] text-white"
                   />
                   <p className="text-xs text-[oklch(0.45_0.02_240)]">
-                    {language === 'zh' ? '产品下载链接将自动发送至此邮箱' : 'Download link will be sent to this email automatically'}
+                    {language === 'zh' 
+                      ? '产品下载链接将自动发送至此邮箱' 
+                      : 'Download link will be sent to this email automatically'}
                   </p>
                 </div>
 
@@ -235,7 +275,7 @@ export function ImprovedPaymentFlow({
                   onClick={handleEmailSubmit}
                   className="w-full bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)]"
                 >
-                  {t.payment.step4}
+                  {t.payment.step4} 🚀
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -249,15 +289,19 @@ export function ImprovedPaymentFlow({
                 </div>
                 <h3 className="text-xl font-bold text-white">{t.payment.success}</h3>
                 <p className="text-sm text-[oklch(0.6_0.02_240)]">
-                  {t.payment.successMsg} <span className="text-[oklch(0.72_0.22_240)]">{email}</span>
+                  {language === 'zh'
+                    ? `产品下载链接已发送至 ${email}`
+                    : `Download link sent to ${email}`}
                   <br />
-                  {t.payment.checkInbox}
+                  {language === 'zh'
+                    ? '请检查收件箱（含垃圾邮件文件夹）'
+                    : 'Check inbox (including spam folder)'}
                 </p>
                 <Button
                   onClick={handleReset}
                   className="w-full bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)]"
                 >
-                  关闭
+                  {language === 'zh' ? '关闭' : 'Close'}
                 </Button>
               </div>
             )}
@@ -269,7 +313,7 @@ export function ImprovedPaymentFlow({
       <PaymentProofUpload
         open={showProofUpload}
         onClose={() => setShowProofUpload(false)}
-        orderId={orderId || 0}
+        orderId={0}
         expectedAmount={String(amount)}
         paymentMethod={paymentMethod}
         onVerified={handleProofVerified}
