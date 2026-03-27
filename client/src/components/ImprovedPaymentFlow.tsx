@@ -37,6 +37,7 @@ export function ImprovedPaymentFlow({
   const [proofUploaded, setProofUploaded] = useState(false);
   const [showProofUpload, setShowProofUpload] = useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [savingProgress, setSavingProgress] = useState(0);
 
   const USDC_ADDRESS = "0x3DbFf9E97b10a10d4A2079B4273473da7e6F4120";
 
@@ -50,15 +51,41 @@ export function ImprovedPaymentFlow({
     }
   }, [paymentConfirmed, currentStep, language]);
 
-  // 凭证保存后自动跳转到邮箱页面
+  // 凭证验证后自动跳转到系统保存页面
   useEffect(() => {
-    if (proofUploaded && currentStep === "saving") {
+    if (proofUploaded && currentStep === "proof") {
       setTimeout(() => {
+        setCurrentStep("saving");
+        toast.success(language === 'zh' ? '凭证已验证！系统正在保存...' : 'Proof verified! System saving...');
+      }, 500);
+    }
+  }, [proofUploaded, currentStep, language]);
+
+  // 系统保存页面显示2秒后自动跳转到邮箱页面
+  useEffect(() => {
+    if (currentStep === "saving") {
+      setSavingProgress(0);
+      const interval = setInterval(() => {
+        setSavingProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 5;
+        });
+      }, 100);
+
+      const timer = setTimeout(() => {
         setCurrentStep("email");
         toast.success(language === 'zh' ? '凭证已保存！现在填写邮箱' : 'Proof saved! Now enter your email');
       }, 2000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer);
+      };
     }
-  }, [proofUploaded, currentStep, language]);
+  }, [currentStep, language]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(USDC_ADDRESS);
@@ -75,10 +102,6 @@ export function ImprovedPaymentFlow({
     setProofUploaded(true);
     setShowProofUpload(false);
     toast.success(language === 'zh' ? '凭证验证成功！' : 'Proof verified!');
-    // 凭证验证后自动跳转到系统保存页面
-    setTimeout(() => {
-      setCurrentStep("saving");
-    }, 500);
   };
 
   const handleEmailSubmit = () => {
@@ -99,11 +122,64 @@ export function ImprovedPaymentFlow({
     setEmail("");
     setProofUploaded(false);
     setPaymentConfirmed(false);
+    setSavingProgress(0);
     onClose();
   };
 
   const amount = paymentMethod === "alipay" ? product.priceCNY : product.priceUSDC;
   const currency = paymentMethod === "alipay" ? "¥" : "$";
+
+  // 步骤指示器
+  const StepIndicator = () => {
+    const steps = [
+      { id: "payment", label: language === 'zh' ? "支付款项" : "Payment", emoji: "1️⃣" },
+      { id: "proof", label: language === 'zh' ? "上传凭证" : "Upload Proof", emoji: "2️⃣" },
+      { id: "saving", label: language === 'zh' ? "系统保存" : "System Saving", emoji: "3️⃣" },
+      { id: "email", label: language === 'zh' ? "邮箱发货" : "Email Delivery", emoji: "4️⃣" },
+    ] as const;
+
+    const stepOrder = ["payment", "proof", "saving", "email"] as const;
+    const currentIndex = stepOrder.indexOf(currentStep as any);
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          {steps.map((step, idx) => {
+            const isActive = stepOrder.indexOf(step.id as any) === currentIndex;
+            const isCompleted = stepOrder.indexOf(step.id as any) < currentIndex;
+            
+            return (
+              <div key={step.id} className="flex-1">
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition ${
+                      isCompleted
+                        ? "bg-green-500/30 border border-green-500 text-green-400"
+                        : isActive
+                        ? "bg-blue-500/30 border border-blue-500 text-blue-400 animate-pulse"
+                        : "bg-[oklch(0.2_0.03_260)] border border-[oklch(0.3_0.04_260)] text-[oklch(0.5_0.02_240)]"
+                    }`}
+                  >
+                    {isCompleted ? <Check className="w-5 h-5" /> : step.emoji}
+                  </div>
+                  <span className={`text-xs text-center font-medium ${
+                    isActive ? "text-blue-400" : isCompleted ? "text-green-400" : "text-[oklch(0.5_0.02_240)]"
+                  }`}>
+                    {step.label}
+                  </span>
+                </div>
+                {idx < steps.length - 1 && (
+                  <div className={`h-0.5 mt-6 ${
+                    isCompleted ? "bg-green-500/50" : "bg-[oklch(0.2_0.03_260)]"
+                  }`} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -116,12 +192,19 @@ export function ImprovedPaymentFlow({
                 {t.payment.title} · {product.title}
               </DialogTitle>
               <p className="text-sm text-[oklch(0.6_0.02_240)] mt-2">
-                1️⃣ {t.payment.step1} → 2️⃣ {t.payment.step2} → 3️⃣ 系统保存 → 4️⃣ {t.payment.step4}
+                {language === 'zh' 
+                  ? "4步骤自动发货流程"
+                  : "4-Step Automated Delivery Process"}
               </p>
             </DialogHeader>
           </div>
 
-          <div className="p-6 max-h-[80vh] overflow-y-auto">
+          {/* Step Indicator */}
+          <div className="px-6 pt-6">
+            <StepIndicator />
+          </div>
+
+          <div className="p-6 max-h-[60vh] overflow-y-auto">
             {/* Step 1: Payment */}
             {currentStep === "payment" && (
               <div className="space-y-6">
@@ -216,7 +299,7 @@ export function ImprovedPaymentFlow({
               </div>
             )}
 
-            {/* Step 2: Upload Proof (AUTO JUMP AFTER PAYMENT) */}
+            {/* Step 2: Upload Proof */}
             {currentStep === "proof" && (
               <div className="space-y-6">
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex gap-3 animate-pulse">
@@ -281,14 +364,20 @@ export function ImprovedPaymentFlow({
                   {language === 'zh' ? '请稍候，系统正在验证和保存您的付款凭证' : 'Please wait while system verifies and saves your payment proof'}
                 </p>
                 <div className="mt-6 space-y-2">
-                  <div className="h-1 bg-[oklch(0.2_0.03_260)] rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 animate-pulse" style={{width: '100%'}}></div>
+                  <div className="h-2 bg-[oklch(0.2_0.03_260)] rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-300"
+                      style={{width: `${savingProgress}%`}}
+                    />
                   </div>
+                  <p className="text-xs text-[oklch(0.5_0.02_240)]">
+                    {savingProgress}% {language === 'zh' ? '已完成' : 'Complete'}
+                  </p>
                 </div>
               </div>
             )}
 
-            {/* Step 4: Email (AUTO JUMP AFTER PROOF SAVED) */}
+            {/* Step 4: Email */}
             {currentStep === "email" && (
               <div className="space-y-6">
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex gap-3 animate-pulse">
@@ -329,7 +418,7 @@ export function ImprovedPaymentFlow({
               </div>
             )}
 
-            {/* Step 4: Success */}
+            {/* Success */}
             {currentStep === "success" && (
               <div className="text-center py-8 space-y-4">
                 <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">

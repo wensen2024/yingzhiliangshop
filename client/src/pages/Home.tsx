@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { ImprovedPaymentFlow } from "@/components/ImprovedPaymentFlow";
 import {
   Zap, Star, Shield, Download, Globe, TrendingUp, Users,
   ChevronRight, Copy, Check, X, Menu, ExternalLink,
@@ -232,237 +233,9 @@ function CountdownBadge({ productId, colorClass }: { productId: string; colorCla
   );
 }
 
-// ─── Purchase Form ────────────────────────────────────────────────────────────
-function PurchaseForm({
-  product,
-  paymentMethod,
-}: {
-  product: (typeof PRODUCTS)[0];
-  paymentMethod: "alipay" | "usdc";
-}) {
-  const [email, setEmail] = useState("");
-  const [txHash, setTxHash] = useState("");
-  const [submitted, setSubmitted] = useState(false);
 
-  const submitOrder = trpc.orders.submit.useMutation({
-    onSuccess: (data) => {
-      setSubmitted(true);
-      if (data.emailSent) {
-        toast.success("🎉 购买成功！下载链接已发送至您的邮箱");
-      } else {
-        toast.warning("订单已记录，请联系 121126652qq@gmail.com 获取产品");
-      }
-    },
-    onError: (err) => {
-      toast.error(`提交失败：${err.message}`);
-    },
-  });
 
-  if (submitted) {
-    return (
-      <div className="text-center py-8 space-y-4">
-        <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-          <Check className="w-8 h-8 text-green-400" />
-        </div>
-        <h3 className="text-xl font-bold text-white">购买成功！</h3>
-        <p className="text-sm text-[oklch(0.6_0.02_240)]">
-          产品下载链接已发送至 <span className="text-[oklch(0.72_0.22_240)]">{email}</span>
-          <br />请检查收件箱（含垃圾邮件文件夹）
-        </p>
-        <p className="text-xs text-[oklch(0.45_0.02_240)]">
-          如未收到，请联系 121126652qq@gmail.com
-        </p>
-      </div>
-    );
-  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) { toast.error("请输入您的邮箱地址"); return; }
-    submitOrder.mutate({
-      email,
-      productId: product.id,
-      productName: product.title,
-      paymentMethod,
-      amount: paymentMethod === "alipay" ? String(product.priceCNY) : String(product.priceUSDC),
-      currency: paymentMethod === "alipay" ? "CNY" : "USD",
-      txHash: txHash || undefined,
-    });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label className="text-[oklch(0.7_0.02_240)] text-sm">
-          <Mail className="w-3.5 h-3.5 inline mr-1.5" />
-          您的邮箱地址 <span className="text-red-400">*</span>
-        </Label>
-        <Input
-          type="email"
-          placeholder="请输入接收产品的邮箱"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="bg-[oklch(0.12_0.02_260)] border-[oklch(0.25_0.04_260)] text-white placeholder:text-[oklch(0.35_0.02_240)] focus:border-[oklch(0.72_0.22_240)]"
-        />
-        <p className="text-xs text-[oklch(0.45_0.02_240)]">产品下载链接将自动发送至此邮箱</p>
-      </div>
-
-      {paymentMethod === "usdc" && (
-        <div className="space-y-2">
-          <Label className="text-[oklch(0.7_0.02_240)] text-sm">
-            交易哈希（可选）
-          </Label>
-          <Input
-            type="text"
-            placeholder="0x... (Polygon交易哈希)"
-            value={txHash}
-            onChange={(e) => setTxHash(e.target.value)}
-            className="bg-[oklch(0.12_0.02_260)] border-[oklch(0.25_0.04_260)] text-white placeholder:text-[oklch(0.35_0.02_240)] font-mono text-xs"
-          />
-        </div>
-      )}
-
-      <Button
-        type="submit"
-        disabled={submitOrder.isPending}
-        className="w-full bg-gradient-to-r from-[oklch(0.72_0.22_240)] to-[oklch(0.65_0.2_300)] hover:opacity-90 text-white font-bold py-5"
-      >
-        {submitOrder.isPending ? (
-          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />正在处理...</>
-        ) : (
-          <><Zap className="w-4 h-4 mr-2" />确认购买，立即发货</>
-        )}
-      </Button>
-    </form>
-  );
-}
-
-// ─── Payment Modal ────────────────────────────────────────────────────────────
-function PaymentModal({
-  product,
-  open,
-  onClose,
-}: {
-  product: (typeof PRODUCTS)[0] | null;
-  open: boolean;
-  onClose: () => void;
-}) {
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"alipay" | "usdc">("alipay");
-  const USDC_ADDRESS = "0x3DbFf9E97b10a10d4A2079B4273473da7e6F4120";
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(USDC_ADDRESS);
-    setCopied(true);
-    toast.success("地址已复制到剪贴板");
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (!product) return null;
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg bg-[oklch(0.09_0.02_260)] border-[oklch(0.25_0.04_260)] text-foreground p-0 overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-[oklch(0.12_0.04_240)] to-[oklch(0.12_0.03_280)] p-6 border-b border-[oklch(0.2_0.03_260)]">
-          <DialogHeader>
-            <DialogTitle className="font-['Syne'] text-xl text-white">
-              购买 · {product.title}
-            </DialogTitle>
-            <p className="text-sm text-[oklch(0.6_0.02_240)] mt-1">选择支付方式 → 填写邮箱 → 自动发货</p>
-          </DialogHeader>
-        </div>
-
-        <div className="p-6 max-h-[80vh] overflow-y-auto">
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "alipay" | "usdc")} className="w-full">
-            <TabsList className="w-full bg-[oklch(0.12_0.02_260)] border border-[oklch(0.2_0.03_260)] mb-6">
-              <TabsTrigger value="alipay" className="flex-1 data-[state=active]:bg-[oklch(0.18_0.04_240)] data-[state=active]:text-white">
-                <span className="mr-2">💙</span> 支付宝
-                <span className="ml-2 text-xs text-green-400 font-semibold">¥{product.priceCNY}</span>
-              </TabsTrigger>
-              <TabsTrigger value="usdc" className="flex-1 data-[state=active]:bg-[oklch(0.18_0.04_240)] data-[state=active]:text-white">
-                <span className="mr-2">🔷</span> USDC
-                <span className="ml-2 text-xs text-blue-400 font-semibold">${product.priceUSDC}</span>
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Alipay Tab */}
-            <TabsContent value="alipay" className="mt-0 space-y-5">
-              <div className="text-center space-y-4">
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <span className="text-3xl font-['Syne'] font-bold text-white">¥{product.priceCNY}</span>
-                  <span className="text-sm text-[oklch(0.45_0.02_240)] line-through">¥{product.originalPriceCNY}</span>
-                  <span className="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded">
-                    省{product.originalPriceCNY - product.priceCNY}元
-                  </span>
-                </div>
-                <div className="relative inline-block">
-                  <div className="absolute inset-0 bg-[oklch(0.72_0.22_240/0.1)] rounded-xl blur-xl" />
-                  <img
-                    src={ASSETS.alipayQR}
-                    alt="支付宝收款码"
-                    className="relative w-52 h-52 object-cover rounded-xl border-2 border-[oklch(0.72_0.22_240/0.3)] mx-auto"
-                  />
-                </div>
-                <div className="bg-[oklch(0.12_0.02_260)] rounded-lg p-3 border border-[oklch(0.2_0.03_260)]">
-                  <p className="text-sm text-[oklch(0.7_0.02_240)]">
-                    <span className="text-yellow-400 font-semibold">⚡ 步骤：</span>
-                    扫码付款 → 在下方填写邮箱 → 系统自动发货
-                  </p>
-                </div>
-              </div>
-              <PurchaseForm product={product} paymentMethod="alipay" />
-            </TabsContent>
-
-            {/* USDC Tab */}
-            <TabsContent value="usdc" className="mt-0 space-y-5">
-              <div className="space-y-4">
-                <div className="flex items-center justify-center gap-3">
-                  <span className="text-3xl font-['Syne'] font-bold text-white">${product.priceUSDC} USDC</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <div className="flex items-center gap-2 bg-[oklch(0.65_0.2_300/0.15)] border border-[oklch(0.65_0.2_300/0.3)] rounded-full px-4 py-1.5">
-                    <div className="w-2 h-2 rounded-full bg-[oklch(0.65_0.2_300)] animate-pulse" />
-                    <span className="text-sm font-semibold text-[oklch(0.8_0.15_300)]">Polygon Network (MATIC)</span>
-                  </div>
-                </div>
-                <div className="bg-[oklch(0.12_0.02_260)] rounded-xl p-4 border border-[oklch(0.25_0.04_260)]">
-                  <p className="text-xs text-[oklch(0.5_0.02_240)] mb-2 uppercase tracking-wider">收款地址 (Polygon USDC)</p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-xs text-[oklch(0.75_0.15_240)] break-all font-mono leading-relaxed">
-                      {USDC_ADDRESS}
-                    </code>
-                    <button
-                      onClick={handleCopy}
-                      className="shrink-0 p-2 rounded-lg bg-[oklch(0.18_0.04_240)] hover:bg-[oklch(0.22_0.06_240)] transition-colors border border-[oklch(0.3_0.06_240)]"
-                    >
-                      {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-[oklch(0.7_0.15_240)]" />}
-                    </button>
-                  </div>
-                </div>
-                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-                  <p className="text-xs text-yellow-300 flex items-start gap-2">
-                    <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                    <span><strong>重要：</strong>请确保使用 Polygon 网络发送 USDC，发送其他网络将导致资产损失。</span>
-                  </p>
-                </div>
-              </div>
-              <PurchaseForm product={product} paymentMethod="usdc" />
-            </TabsContent>
-          </Tabs>
-
-          {/* Guarantee */}
-          <div className="mt-4 flex items-center justify-center gap-4 text-xs text-[oklch(0.5_0.02_240)]">
-            <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-red-400" /> 不支持退款</span>
-            <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-blue-400" /> 安全支付</span>
-            <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-yellow-400" /> 自动发货</span>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({
@@ -1073,16 +846,18 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* ── Payment Modal ── */}
-      <PaymentModal
-        product={selectedProduct}
-        open={paymentOpen}
-        onClose={() => {
-          setPaymentOpen(false);
-          // reset after close so form is fresh next time
-          setTimeout(() => setSelectedProduct(null), 300);
-        }}
-      />
+      {/* ── Payment Flow Modal ── */}
+      {selectedProduct && (
+        <ImprovedPaymentFlow
+          product={selectedProduct}
+          open={paymentOpen}
+          onClose={() => {
+            setPaymentOpen(false);
+            // reset after close so form is fresh next time
+            setTimeout(() => setSelectedProduct(null), 300);
+          }}
+        />
+      )}
     </div>
   );
 }
