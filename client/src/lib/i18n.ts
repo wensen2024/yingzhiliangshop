@@ -14,7 +14,7 @@ export const translations = {
     },
     product: {
       title: '精选产品',
-      combo: '全套产品组合包',
+      combo: '全套产品组合',
       comboDesc: '一次性获得全部4款产品，享受最大折扣。',
       comboValue: '总价值',
       buyCombo: '获取全套组合',

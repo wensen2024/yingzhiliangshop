@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -135,7 +136,7 @@ const PRODUCTS = [
     badge: "ULTIMATE",
     badgeType: "new",
     icon: Zap,
-    title: "全套产品组合包",
+    title: "全套产品组合",
     subtitle: "Complete Digital Product Bundle",
     image: ASSETS.heroBg,
     priceCNY: 70099,
@@ -660,7 +661,7 @@ export default function Home() {
                     setSelectedProduct({
                       ...PRODUCTS[0],
                       id: "bundle",
-                      title: "全套产品组合包",
+                      title: "全套产品组合",
                       priceCNY: 20999,
                       priceUSDC: 2944,
                       originalPriceCNY: 30496,
