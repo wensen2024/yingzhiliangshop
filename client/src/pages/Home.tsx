@@ -268,8 +268,9 @@ function ProductCard({
       <div className="relative h-52 overflow-hidden shrink-0">
         <img
           src={product.image}
-          alt={product.title}
+          alt={`盈指量科技 ${product.title} — ${product.subtitle}`}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.09_0.02_260)] via-transparent to-transparent" />
       </div>
@@ -400,7 +401,7 @@ export default function Home() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <span className="font-['Syne'] font-bold text-white text-lg tracking-tight">
-              Digital<span className="text-[oklch(0.72_0.22_240)]">Flow</span>
+              盈指量<span className="text-[oklch(0.72_0.22_240)]">科技</span>
             </span>
           </div>
 
@@ -463,7 +464,7 @@ export default function Home() {
       {/* ── Hero Section ── */}
       <section className="relative min-h-screen flex items-center overflow-hidden" id="首页">
         <div className="absolute inset-0">
-          <img src={ASSETS.heroBg} alt="Hero Background" className="w-full h-full object-cover opacity-40" />
+          <img src={ASSETS.heroBg} alt="盈指量科技数字产品商店 — AI工具与量化交易手册宇宙科技背景" className="w-full h-full object-cover opacity-40" loading="eager" />
           <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.07_0.015_260/0.3)] via-[oklch(0.07_0.015_260/0.5)] to-[oklch(0.07_0.015_260)]" />
           <div className="absolute inset-0 grid-bg opacity-30" />
         </div>
@@ -489,7 +490,7 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="font-['Syne'] text-5xl md:text-7xl font-extrabold text-white leading-[1.05] mb-6"
             >
-              用AI工具
+              <span className="sr-only">盈指量科技 Yingzhiliang — </span>用AI工具
               <br />
               <span className="gradient-text-blue">解锁你的</span>
               <br />
@@ -826,12 +827,12 @@ export default function Home() {
                 <Sparkles className="w-3.5 h-3.5 text-white" />
               </div>
               <span className="font-['Syne'] font-bold text-white">
-                Digital<span className="text-[oklch(0.72_0.22_240)]">Flow</span> Studio
-              </span>
+              盈指量<span className="text-[oklch(0.72_0.22_240)]">科技</span>
+            </span>
             </div>
             <div className="text-center">
               <p className="text-xs text-[oklch(0.4_0.02_240)]">
-                © 2026 盈指量有限公司 · 全球数字产品销售平台
+                © 2026 盈指量科技 (yingzhiliang.space) · 全球数字产品销售平台
               </p>
               <p className="text-xs text-[oklch(0.35_0.02_240)] mt-1">
                 支持支付宝 · Polygon USDC · 邮件自动发货 · 不支持退款

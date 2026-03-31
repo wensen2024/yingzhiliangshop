@@ -1,0 +1,13 @@
+# robots.txt — 盈指量科技 Yingzhiliang.space
+# Generated for global SEO optimization
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /__manus__/
+
+# Sitemap location
+Sitemap: https://yingzhiliang.space/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
