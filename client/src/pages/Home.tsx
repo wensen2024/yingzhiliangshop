@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -648,9 +649,9 @@ export default function Home() {
 }
 
 function LanguageSwitcher() {
-  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { language, setLanguage } = useLanguage();
 
   const languages = [
     { code: 'zh', name: '中文', flag: '🇨🇳' },
@@ -661,7 +662,7 @@ function LanguageSwitcher() {
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
   ];
 
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
+  const currentLang = languages.find(l => l.code === language) || languages[0];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -674,8 +675,7 @@ function LanguageSwitcher() {
   }, []);
 
   const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    localStorage.setItem('i18nextLng', lng);
+    setLanguage(lng as any);
     setIsOpen(false);
   };
 
@@ -703,12 +703,12 @@ function LanguageSwitcher() {
                 key={lang.code}
                 onClick={() => changeLanguage(lang.code)}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-white/5 ${
-                  i18n.language === lang.code ? 'text-blue-400 bg-blue-400/5' : 'text-gray-300'
+                  language === lang.code ? 'text-blue-400 bg-blue-400/5' : 'text-gray-300'
                 }`}
               >
                 <span className="text-lg">{lang.flag}</span>
                 <span>{lang.name}</span>
-                {i18n.language === lang.code && <Check className="w-4 h-4 ml-auto" />}
+                {language === lang.code && <Check className="w-4 h-4 ml-auto" />}
               </button>
             ))}
           </motion.div>
